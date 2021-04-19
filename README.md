@@ -5,6 +5,7 @@ Table of Contents
 ---
 1. [General Information](#general-information)
 2. [Orders vs. Logs Table](#)
+    * Q1 (#write-a-query-to-output-all-unique-set-of-order_id-and-merchant_name-that-were-created-in-january-2021-and-whether-the-order-has-any-history-of-having-been-declined)
 
 General Information
 ---
@@ -15,7 +16,7 @@ Orders vs. Logs Table
 ---
 Orders table that includes purchases and logs table includes all metadata associated with an order. 
 
-### Write a query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.
+#### Write a query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.
 
 Approach:
 * CTE with only January 2021 data and filter by using EXTRACT year and month from order_created_at
