@@ -1,9 +1,21 @@
 # Intermediate-Advance SQL Queries
-A collection of SQL queries that I created.
+> A collection of SQL queries that I created.
 
+Table of Contents
+---
+1. [General Information](#general-information)
+2. [Orders vs. Logs Table](#)
+
+General Information
+---
+A collection of SQL queries that I created over-time. 
+
+
+Orders vs. Logs Table
+---
 Orders table that includes purchases and logs table includes all metadata associated with an order. 
 
-Write a query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.
+### Write a query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.
 
 Approach:
 * CTE with only January 2021 data and filter by using EXTRACT year and month from order_created_at
@@ -24,7 +36,7 @@ WHERE has_declined_log IS TRUE
 ; 
 ```
 
-Write a query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.
+### Write a query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.
 
 Approach:
 * CTE with only January 2021 data and JOIN orders and logs table 
@@ -61,10 +73,10 @@ ORDER BY order_week, merchant_name
 ;
 ```
 
-Write a query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.
+### Write a query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.
 
 Approach:
-* CTE with only July 2019 data and create new column using DATE_TRUNC to pull day and ignore timestamp in order_created_at
+* CTE with only January 2021 data and create new column using DATE_TRUNC to pull day and ignore timestamp in order_created_at
 * COUNT(*) for order volume 
 * ROW_NUMBER() in DESC order by order volume 
 * GROUP BY day and ORDER BY order volume in ASC 
