@@ -5,7 +5,9 @@ Table of Contents
 ---
 1. [General Information](#general-information)
 2. [Orders vs. Logs Table](#)
-    * Q1 (#write-a-query-to-output-all-unique-set-of-order_id-and-merchant_name-that-were-created-in-january-2021-and-whether-the-order-has-any-history-of-having-been-declined)
+    * [Q1](#write-a-query-to-output-all-unique-set-of-order_id-and-merchant_name-that-were-created-in-january-2021-and-whether-the-order-has-any-history-of-having-been-declined)
+    * [Q2](#write-a-query-that-provides-a-weekly-report-of-january-2021-summarizing-per-merchant-total-number-of-orders-count-of-orders-where-the-order-total-is-under-100-count-of-orders-where-order-total-is-greater-than-or-equal-to-100-approval-rate--by-order-count-and-approval-rate--by-order-amount)
+    * [Q3](#write-a-query-that-shows-the-top-5-days-in-january-2021-in-ascending-order-with-the-highest-order-volume-in-count)
 
 General Information
 ---
@@ -37,7 +39,7 @@ WHERE has_declined_log IS TRUE
 ; 
 ```
 
-### Write a query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.
+#### Write a query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.
 
 Approach:
 * CTE with only January 2021 data and JOIN orders and logs table 
@@ -74,7 +76,7 @@ ORDER BY order_week, merchant_name
 ;
 ```
 
-### Write a query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.
+#### Write a query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.
 
 Approach:
 * CTE with only January 2021 data and create new column using DATE_TRUNC to pull day and ignore timestamp in order_created_at
