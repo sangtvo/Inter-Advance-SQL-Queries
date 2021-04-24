@@ -4,13 +4,13 @@
 Table of Contents
 ---
 1. [General Information](#general-information)
-2. [Orders vs. Logs Table](#)
+2. [Orders vs. Logs Table](#orders-vs-logs-table)
     * [A query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.](#write-a-query-to-output-all-unique-set-of-order_id-and-merchant_name-that-were-created-in-january-2021-and-whether-the-order-has-any-history-of-having-been-declined)
     * [A query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.](#write-a-query-that-provides-a-weekly-report-of-january-2021-summarizing-per-merchant-total-number-of-orders-count-of-orders-where-the-order-total-is-under-100-count-of-orders-where-order-total-is-greater-than-or-equal-to-100-approval-rate--by-order-count-and-approval-rate--by-order-amount)
     * [A query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.](#write-a-query-that-shows-the-top-5-days-in-january-2021-in-ascending-order-with-the-highest-order-volume-in-count)
-3. [Customers vs. Loans Table](#)
-    * [A query to list customers that have more than one loan.](#)
-    * [A query that returns each customer and the loan_id associated with the first loan each customer had created in 2019](#)
+3. [Customers vs. Loans Table](#customers-vs-loans-table)
+    * [A query to list customers that have more than one loan.](#a-query-to-list-customers-that-have-more-than-one-loan)
+    * [A query that returns each customer and the loan_id associated with the first loan each customer had created in 2021](#a-query-that-returns-each-customer-and-the-loan_id-associated-with-the-first-loan-each-customer-had-created-in-2021)
 
 
 General Information
@@ -134,12 +134,12 @@ GROUP BY 1
 HAVING COUNT(*) > 1
 ```
 
-#### A query that returns each customer and the loan_id associated with the first loan each customer had created in 2019.
+#### A query that returns each customer and the loan_id associated with the first loan each customer had created in 2021.
 
 Desired output: customer_id | loan_id
 
 Approach:
-* CTE with only 2019 data
+* CTE with only 2021 data
 * EXTRACT year from created_at and cast as integer
 * RANK() OVER to rank customer ID ordered by created_at
 * Select the first rank as the earliest/first loan per customer
@@ -148,13 +148,13 @@ Approach:
 WITH new_data AS (
 SELECT *, EXTRACT(year FROM created_at)::int AS year
 FROM loans
-WHERE EXTRACT(year FROM created_at)::int = 2019
+WHERE EXTRACT(year FROM created_at)::int = 2021
 )
 
 SELECT customer_id, loan_id
 FROM (
-		SELECT *, RANK() OVER (PARTITION BY customer_id ORDER BY created_at ASC) AS rank
-		FROM new_data
+	SELECT *, RANK() OVER (PARTITION BY customer_id ORDER BY created_at ASC) AS rank
+	FROM new_data
 ) AS a
 WHERE rank = 1
 ```
