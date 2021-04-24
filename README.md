@@ -5,9 +5,13 @@ Table of Contents
 ---
 1. [General Information](#general-information)
 2. [Orders vs. Logs Table](#)
-    * [Write a query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.](#write-a-query-to-output-all-unique-set-of-order_id-and-merchant_name-that-were-created-in-january-2021-and-whether-the-order-has-any-history-of-having-been-declined)
-    * [Write a query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.](#write-a-query-that-provides-a-weekly-report-of-january-2021-summarizing-per-merchant-total-number-of-orders-count-of-orders-where-the-order-total-is-under-100-count-of-orders-where-order-total-is-greater-than-or-equal-to-100-approval-rate--by-order-count-and-approval-rate--by-order-amount)
-    * [Write a query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.](#write-a-query-that-shows-the-top-5-days-in-january-2021-in-ascending-order-with-the-highest-order-volume-in-count)
+    * [A query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.](#write-a-query-to-output-all-unique-set-of-order_id-and-merchant_name-that-were-created-in-january-2021-and-whether-the-order-has-any-history-of-having-been-declined)
+    * [A query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.](#write-a-query-that-provides-a-weekly-report-of-january-2021-summarizing-per-merchant-total-number-of-orders-count-of-orders-where-the-order-total-is-under-100-count-of-orders-where-order-total-is-greater-than-or-equal-to-100-approval-rate--by-order-count-and-approval-rate--by-order-amount)
+    * [A query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.](#write-a-query-that-shows-the-top-5-days-in-january-2021-in-ascending-order-with-the-highest-order-volume-in-count)
+3. [Customers vs. Loans Table](#)
+    * [A query to list customers that have more than one loan.](#)
+    * [A query that returns each customer and the loan_id associated with the first loan each customer had created in 2019](#)
+
 
 General Information
 ---
@@ -18,7 +22,9 @@ Orders vs. Logs Table
 ---
 Orders table that includes purchases and logs table includes all metadata associated with an order. 
 
-#### Write a query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.
+#### A query to output all unique set of order_id and merchant_name that were created in January 2021, and whether the order has any history of having been declined.
+
+Desired output: order_id | merchant_name | has_declined_log
 
 Approach:
 * CTE with only January 2021 data and filter by using EXTRACT year and month from order_created_at
@@ -39,7 +45,9 @@ WHERE has_declined_log IS TRUE
 ; 
 ```
 
-#### Write a query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.
+#### A query that provides a weekly report of January 2021, summarizing per merchant, total number of orders, count of orders where the order total is under $100, count of orders where order total is greater than or equal to $100, approval rate (%) by order count, and approval rate (%) by order amount.
+
+Desired output: order_week | merchant_name | total_orders_count | orders_under100_count | orders_over100_count | approval_rate_by_count | approval_rate_by_sum
 
 Approach:
 * CTE with only January 2021 data and JOIN orders and logs table 
@@ -76,7 +84,9 @@ ORDER BY order_week, merchant_name
 ;
 ```
 
-#### Write a query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.
+#### A query that shows the top 5 days in January 2021 in ascending order with the highest order volume in count.
+
+Desired output: order_created_at | orders_count
 
 Approach:
 * CTE with only January 2021 data and create new column using DATE_TRUNC to pull day and ignore timestamp in order_created_at
@@ -102,4 +112,49 @@ WHERE row_num <= 5
 ;
 ```
 
+Customers vs. Loans Table
+---
+Loans table with loan_id, created_at, and customer_id as a foreign key. Each customer can have more than one loan.
 
+#### A query to list customers that have more than one loan.
+
+Desired output: customer_id | num_of_loans
+
+Approach:
+* JOIN the two tables
+* GROUP BY the id's
+* COUNT that is > 1
+
+```sql
+SELECT c.customer_id
+FROM customers c
+LEFT JOIN loans l
+	ON c.customer_id = l.customer_id
+GROUP BY 1
+HAVING COUNT(*) > 1
+```
+
+#### A query that returns each customer and the loan_id associated with the first loan each customer had created in 2019.
+
+Desired output: customer_id | loan_id
+
+Approach:
+* CTE with only 2019 data
+* EXTRACT year from created_at and cast as integer
+* RANK() OVER to rank customer ID ordered by created_at
+* Select the first rank as the earliest/first loan per customer
+
+```sql
+WITH new_data AS (
+SELECT *, EXTRACT(year FROM created_at)::int AS year
+FROM loans
+WHERE EXTRACT(year FROM created_at)::int = 2019
+)
+
+SELECT customer_id, loan_id
+FROM (
+		SELECT *, RANK() OVER (PARTITION BY customer_id ORDER BY created_at ASC) AS rank
+		FROM new_data
+) AS a
+WHERE rank = 1
+```
